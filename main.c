@@ -30,13 +30,13 @@ Student *stack;
  * @param student the student to push
  * @param stack the stack to push the student struct to
  */
-void push(Student student, Student stack[]) {
+void push(Student *student, Student stack[]) {
 
     if (stackIndex + 1 == sizeof (stack)) {
         printf("\nStack ist voll");
     } else {
         stackIndex++;
-        stack[stackIndex] = student;
+        stack[stackIndex] = *student;
     }
 
 }
@@ -63,7 +63,7 @@ Student pop(Student stack[]) {
  * 
  * @return the read student
  */
-Student readStudent() {
+Student *readStudent() {
 
     Student *student = (Student*) malloc(sizeof (Student));
 
@@ -76,28 +76,7 @@ Student readStudent() {
     printf("\nStudiengang eingeben: ");
     student->studienGang = readLine();
 
-
-}
-
-/**
- * @See http://www.rainydayz.org/beej/bgc/gets.html
- * 
- * @return the read line.
- */
-char * readLine() {
-    
-    fflush(stdin);
-    
-    char *line = (char*) malloc(100);
-    
-    fgets(line, sizeof(line), stdin);
-    
-    // remove new line char
-    int slen = strlen(line);
-    if(slen > 0 && line[slen -1] == '\n') {
-        line[slen -1] = '\0';
-    }
-    return line;
+    return student;
 }
 
 /**
@@ -106,9 +85,9 @@ char * readLine() {
  * 
  * @return the read line.
  */
-/*
+
 char * readLine(void) {
-    
+
     char * line = malloc(100), * linep = line;
     size_t lenmax = 100, len = lenmax;
     int c;
@@ -139,7 +118,11 @@ char * readLine(void) {
     *line = '\0';
     return linep;
 }
-*/
+
+void clrstdin() {
+    char c;
+    while ((c = getchar()) != EOF && c != '\n');
+}
 
 /*
  * Main function for the stack program.
@@ -152,6 +135,7 @@ int main(int argc, char** argv) {
     int stackSize;
     printf("Geben Sie die Größe des Stacks ein: ");
     scanf("%i", &stackSize);
+    clrstdin();
     stack = (Student*) malloc(sizeof (Student) * stackSize);
     if (stack == NULL) {
         exit(-1);
@@ -169,12 +153,13 @@ int main(int argc, char** argv) {
         printf("\n2.\tStudenten vom Stack lesen");
         printf("\n3.\tProgramm beenden\n");
         scanf("%i", &choose);
+        clrstdin();
         printf("######################################");
 
         switch (choose) {
             case 1:
             {
-                Student student = readStudent();
+                Student *student = readStudent();
                 push(student, stack);
             }
                 break;
