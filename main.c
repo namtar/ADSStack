@@ -22,7 +22,7 @@ struct Student {
 
 // define global variables
 int stackIndex = -1;
-Student *stack;
+//Student *stack;
 
 /**
  * Pushes a student struct to the given stack. If the stack is full an error message is displayed.
@@ -30,13 +30,13 @@ Student *stack;
  * @param student the student to push
  * @param stack the stack to push the student struct to
  */
-void push(Student *student, Student stack[]) {
+void push(Student *student, Student stackIn[], int sizeOfArray) {
 
-    if (stackIndex + 1 == sizeof (stack)) {
+    if (stackIndex + 1 == sizeOfArray) {
         printf("\nStack ist voll");
     } else {
         stackIndex++;
-        stack[stackIndex] = *student;
+        stackIn[stackIndex] = *student;
     }
 
 }
@@ -44,17 +44,23 @@ void push(Student *student, Student stack[]) {
 /**
  * Pops the last student struct from the stack. If the stack is empty an error message will be displayed.
  * 
+ * @param a student pointer.
  * @param stack the stack to pop the student struct from
- * @return the popped student
+ * 
+ * @return error code. -1 is returned if stack is empty.
  */
-Student pop(Student stack[]) {
+int pop(Student *student, Student stack[]) {
+
 
     if (stackIndex < 0) {
         printf("\nStack ist leer. Bitte erst Elemente hinzufügen.");
+        return EXIT_FAILURE;
     } else {
-        Student student = stack[stackIndex];
+        //        Student s1 = stack[stackIndex];        
+        //        student = s1;        
+        *student = stack[stackIndex];
         stackIndex--;
-        return student;
+        return EXIT_SUCCESS;
     }
 }
 
@@ -69,11 +75,11 @@ Student *readStudent() {
 
     printf("\nName eingeben: ");
     student->name = readLine();
-    printf("\nVorname eingeben: ");
+    printf("Vorname eingeben: ");
     student->vorname = readLine();
-    printf("\nMatrikel-Nr. eingeben: ");
+    printf("Matrikel-Nr. eingeben: ");
     student->matrikelNr = readLine();
-    printf("\nStudiengang eingeben: ");
+    printf("Studiengang eingeben: ");
     student->studienGang = readLine();
 
     return student;
@@ -136,10 +142,11 @@ int main(int argc, char** argv) {
     printf("Geben Sie die Größe des Stacks ein: ");
     scanf("%i", &stackSize);
     clrstdin();
-    stack = (Student*) malloc(sizeof (Student) * stackSize);
-    if (stack == NULL) {
-        exit(-1);
-    }
+    //    stack = (Student*) malloc(sizeof (Student) * stackSize);
+    //    if (stack == NULL) {
+    //        exit(EXIT_FAILURE);
+    //    }
+    Student stack[stackSize];
 
     short done = 0;
     while (done == 0) {
@@ -151,33 +158,45 @@ int main(int argc, char** argv) {
         printf("\nWas wollen Sie tun?");
         printf("\n1.\tStudenten eingeben und auf Stack packen.");
         printf("\n2.\tStudenten vom Stack lesen");
-        printf("\n3.\tProgramm beenden\n");
+        printf("\n3.\tProgramm beenden");
+        printf("\n4.\tInfo\n");
         scanf("%i", &choose);
         clrstdin();
         printf("######################################");
 
+        int returnCode;
         switch (choose) {
             case 1:
             {
                 Student *student = readStudent();
-                push(student, stack);
+                push(student, stack, sizeof (stack) / sizeof (Student));
             }
                 break;
             case 2:
             {
-                Student student = pop(stack);
-                printf("######################################");
-                printf("\nStudent vom Stack:");
-                printf("\nName: %s", student.name);
-                printf("\nVorname: %s", student.vorname);
-                printf("\nMatrikel-Nr: %s", student.matrikelNr);
-                printf("\nStudiengang: %s", student.studienGang);
-                printf("######################################");
+                Student student;
+                returnCode = pop(&student, stack);
+
+                if (returnCode == EXIT_SUCCESS) {
+                    printf("######################################");
+                    printf("\nStudent vom Stack:");
+                    printf("Name: %s", student.name);
+                    printf("Vorname: %s", student.vorname);
+                    printf("Matrikel-Nr: %s", student.matrikelNr);
+                    printf("Studiengang: %s", student.studienGang);
+                    printf("######################################");
+                }
+//                free(&student);
             }
                 break;
             case 3:
                 done = 1;
                 break;
+            case 4:
+                printf("##################################");
+                printf("\nSizeof Stack: %i", sizeof (stack));
+                printf("\nSizeof Student: %i", sizeof (Student));
+                printf("\nNumber of Elements on Stack: %i", 0);
         }
     }
 
