@@ -56,8 +56,6 @@ int pop(Student *student, Student stack[]) {
         printf("\nStack ist leer. Bitte erst Elemente hinzufügen.");
         return EXIT_FAILURE;
     } else {
-        //        Student s1 = stack[stackIndex];        
-        //        student = s1;        
         *student = stack[stackIndex];
         stackIndex--;
         return EXIT_SUCCESS;
@@ -142,10 +140,7 @@ int main(int argc, char** argv) {
     printf("Geben Sie die Größe des Stacks ein: ");
     scanf("%i", &stackSize);
     clrstdin();
-    //    stack = (Student*) malloc(sizeof (Student) * stackSize);
-    //    if (stack == NULL) {
-    //        exit(EXIT_FAILURE);
-    //    }
+
     Student stack[stackSize];
 
     short done = 0;
@@ -185,8 +180,14 @@ int main(int argc, char** argv) {
                     printf("Matrikel-Nr: %s", student.matrikelNr);
                     printf("Studiengang: %s", student.studienGang);
                     printf("######################################");
+
+                    // dont forget to free the strings
+                    free(student.name);
+                    free(student.vorname);
+                    free(student.matrikelNr);
+                    free(student.studienGang);
                 }
-//                free(&student);
+
             }
                 break;
             case 3:
@@ -194,9 +195,8 @@ int main(int argc, char** argv) {
                 break;
             case 4:
                 printf("##################################");
-                printf("\nSizeof Stack: %i", sizeof (stack));
-                printf("\nSizeof Student: %i", sizeof (Student));
-                printf("\nNumber of Elements on Stack: %i", 0);
+                printf("\nSizeof Stack: %i", sizeof (stack) / sizeof(Student));                
+                printf("\nNumber of Elements on Stack: %i", stackIndex + 1);
         }
     }
 
